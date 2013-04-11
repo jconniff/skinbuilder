@@ -1,0 +1,149 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Gen Color - sort</title>
+
+<link rel="icon" 
+      type="image/png" 
+      href="http://jconniff.github.io/skinner/assets/images/favicon.png">
+
+<link rel="stylesheet" href="http://yui.yahooapis.com/3.9.0/build/cssnormalize/cssnormalize-min.css">
+<!-- <script src="http://yui.yahooapis.com/3.9.0/build/yui/yui-min.js"></script>
+ --><script src="../yui3/build/yui/yui-min.js"></script>
+
+<style>
+
+.url {
+    cursor: pointer;
+}
+.yui3-datatable-col-mHex, 
+.yui3-datatable-col-bHex {
+    font-family: courier;
+}
+tbody .yui3-datatable-col-master,
+tbody .yui3-datatable-col-background {
+    padding: 0 !important;
+    width: 150px;
+}
+tbody .yui3-datatable-col-master div,
+tbody .yui3-datatable-col-background div {
+    padding: 4px; /*0.5em;*/
+}
+.yui3-skin-sam .yui3-datatable-odd .yui3-datatable-cell {
+    background-color: transparent !important;
+}
+.yui3-skin-sam .yui3-datatable-data .yui3-datatable-even .yui3-datatable-sorted {
+    background-color: transparent !important;
+}
+.yui3-datatable-col-url span {
+    border-bottom: 1px dotted #CCCCCC;
+}
+html .yui3-skin-sam .yui3-datatable-header {
+    background: none;
+    background-color: #e8e8e8;
+    color: #000000;
+    
+    text-align: center;
+    text-shadow: 0 1px 1px #FFFFFF;
+    vertical-align: bottom;
+    white-space: nowrap;
+}    
+</style>
+<body class="yui3-skin-sam">
+    <div id="datatable"></div>
+</body>
+</html>
+<script>
+YUI().use('node', 'datatable', 'querystring', 'color', function(Y){
+
+    // Datatable instance ///////////////////////////////////////////////////////
+        
+    var cols = [
+        {
+            key:"master",
+            formatter: '<div style="background-color: {mHex};">{value}</div>',
+            //formatter: '<div style="background-color: {mHex}; color:{mHex};" title="{mHex}">{value}</div>',
+            allowHTML: true,
+            label:"Master Color",
+            sortable:true
+        },
+        {
+            key: 'mHex', 
+            label: 'mHex',
+            sortable:true
+            // formatter: '-',
+            // width: '3px'
+        }
+    ],
+    data = [
+    ],
+    skinUrls = [
+        '#467077',
+        '#a78b02',
+        '#7794b1',
+    ];
+
+    skinUrls = Y.Color.getSimilar('#ccc', 300, 100);
+
+
+    var populateData = function() {
+        var i;
+        for(i = 0; i < skinUrls.length; i+=1) {
+            data.push({   
+                master: '',
+                mHex: skinUrls[i], 
+            });
+        }
+    };
+    populateData();
+
+
+    // processes a hex color value
+    // returns a 3 digit number where each digit 
+    // represents a coarse granularity ( 0-9 ) 
+    // of hue, sat, lit
+    // this is used for sorting colors
+    var getColorSortNum = function(hex) {
+        var i,
+            hue,
+            sat,
+            lit,
+            num;
+        hex = Y.Color.convert(hex, Y.Color.TYPES.HSL); // hsl(0, 100%, 50%)
+        hex = Y.Color.toArray(hex); // [0, 100, 50]
+        hue = Math.floor(hex[0] / 36.1).toString();
+        sat = Math.floor(hex[1] / 10.1).toString();
+        lit = Math.floor(hex[2] / 10.1).toString();
+        
+        num = hue + sat + lit;
+        
+        return num;
+    }
+
+    for(i = 0; i < data.length; i+=1) {
+        var mHex;
+        mHex = skinUrls[i];
+        data[i].master = getColorSortNum(mHex);
+        data[i].mHex = mHex;
+    }
+    var table = new Y.DataTable({
+        columns: cols,
+        data   : data,
+        //caption: "Table with simple column sorting",
+        //summary: "Contacts list"
+    }).render("#datatable");
+
+});
+</script>
+<!--
+Copyright 2012 Yahoo! Inc. All rights reserved.
+
+Redistribution and use of this software in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+    * Neither the name of Yahoo! Inc. nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission of Yahoo! Inc.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->

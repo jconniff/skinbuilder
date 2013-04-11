@@ -1,0 +1,206 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Skin Gallery</title>
+
+<link rel="icon" 
+      type="image/png" 
+      href="http://jconniff.github.io/skinner/assets/images/favicon.png">
+
+<link rel="stylesheet" href="http://yui.yahooapis.com/3.9.0/build/cssnormalize/cssnormalize-min.css">
+<!-- <script src="http://yui.yahooapis.com/3.9.0/build/yui/yui-min.js"></script>
+ --><script src="../yui3/build/yui/yui-min.js"></script>
+
+<style>
+
+.url {
+    cursor: pointer;
+}
+.yui3-datatable-col-mHex, 
+.yui3-datatable-col-bHex {
+    font-family: courier;
+}
+tbody .yui3-datatable-col-master,
+tbody .yui3-datatable-col-background {
+    padding: 0 !important;
+    width: 150px;
+}
+tbody .yui3-datatable-col-master div,
+tbody .yui3-datatable-col-background div {
+    padding: 0.5em;
+}
+.yui3-skin-sam .yui3-datatable-odd .yui3-datatable-cell {
+    background-color: transparent !important;
+}
+.yui3-skin-sam .yui3-datatable-data .yui3-datatable-even .yui3-datatable-sorted {
+    background-color: transparent !important;
+}
+.yui3-datatable-col-mHex,
+.yui3-datatable-col-url,
+.yui3-datatable-col-bHex {
+    display: none;
+}
+.yui3-datatable-col-url span {
+    border-bottom: 1px dotted #CCCCCC;
+}
+.yui3-skin-sam .yui3-datatable-header {
+
+}
+html .yui3-skin-sam .yui3-datatable-header {
+    background: none;
+    background-color: #e8e8e8;
+    color: #000000;
+    
+    text-align: center;
+    text-shadow: 0 1px 1px #FFFFFF;
+    vertical-align: bottom;
+    white-space: nowrap;
+}    
+</style>
+<body class="yui3-skin-sam">
+    <div id="datatable"></div>
+</body>
+</html>
+<script>
+YUI().use('node', 'datatable', 'querystring', 'color', function(Y){
+
+    // Datatable instance ///////////////////////////////////////////////////////
+    var i,    
+    cols = [
+        {
+            key:"master",
+            //formatter: '<div style="background-color: {mHex};">{value}</div>',
+            formatter: '<div style="background-color: {mHex}; color:{mHex};" title="{mHex}">{value}</div>',
+            allowHTML: true,
+            label:"Master Color",
+            sortable:true
+        },
+        {
+            key:"background", 
+            //formatter: '<div style="background-color: {bHex};">{value}</div>',
+            formatter: '<div style="background-color: {bHex}; color:{bHex};" title="{bHex}">{value}</div>',
+            allowHTML: true,
+            label:"Bkg Color", 
+            sortable:true
+        },
+        {
+            key: 'mHex', 
+            label: 'mHex',
+            sortable:true
+            // formatter: '-',
+            // width: '3px'
+        },
+        {key: 'bHex', label: 'bhex'},
+        {
+            key:"name",
+            formatter: '<a href="{url}" title="Click to view" target="_blank">{value}</a>',
+            allowHTML: true,
+            label:"Skin Name"
+        },
+        {
+            key:"url",
+            formatter: '<span title="{value}" class="url">URL</span>',
+            allowHTML: true,
+            label:"URL"
+        }
+    ],
+    data = [
+    ],
+    skinUrls = [
+            'http://jconniff.github.io/skinner/index.html?opt=mine,#FFAA33,#f0f3f4,1,1,10,1.5&h=180,-40,30&n=180,-40,70&l=180,-40,80&b=180,-30,90',
+
+        'http://jconniff.github.io/skinner/index.html?opt=beach,#467077,#e0ded2,0.3,2.84,10,1.5&h=0,-30,60&n=0,-30,75&l=0,-30,80&b=0,-30,90',
+        'http://jconniff.github.io/skinner/index.html?opt=florida2,#a78b02,#f9f8e2,2.22,1,10,1.5&h=0,-30,60&n=0,-30,75&l=0,-30,80&b=0,-30,90',
+        'http://jconniff.github.io/skinner/index.html?opt=mine,#7794b1,#f0f3f4,1,1,10,1.5&h=180,-40,30&n=180,-40,70&l=180,-40,80&b=180,-30,90',
+        'http://jconniff.github.io/skinner/index.html?opt=mine,#2e5a2a,#f1f5f0,1,1,10,1.5&h=328,-40,30&n=180,-40,70&l=180,-40,80&b=180,-30,90',
+        'http://jconniff.github.io/skinner/index.html?opt=rust,#902c33,#dfdbd2,1,2.84,10,1.5&h=3,-65,30&n=180,-58,70&l=180,-67,80&b=180,-71,90',
+        'http://jconniff.github.io/skinner/index.html?opt=mine,#1f3d8e,#ffffff,1,1,10,1.5&h=0,-30,60&n=0,-30,75&l=0,-30,80&b=0,-30,90',
+        'http://jconniff.github.io/skinner/index.html?opt=mine,#2e5a2a,#000000,1,1,10,1.5&h=180,-50,-30&n=180,-50,-50&l=180,-50,-60&b=0,-40,-70',
+        'http://jconniff.github.io/skinner/index.html?opt=chocolate,#326c47,#532723,2.08,1.72,22,1.5&h=180,-50,-30&n=180,-50,-50&l=180,-50,-60&b=0,-40,-70',
+        'http://jconniff.github.io/skinner/index.html?opt=y-purple,#6E329D,#ffffff,1,1,0,1.5&h=0,-99,60&n=0,-99,75&l=0,-99,80&b=0,-99,90',
+        'http://jconniff.github.io/skinner/index.html?opt=redorange,#a71202,#f7f5f3,2.22,1,10,1.5&h=39,-30,60&n=51,-30,75&l=65,-30,80&b=55,-30,90',
+        'http://jconniff.github.io/skinner/index.html?opt=red-gray,#a4191d,#fbfaf9,0.3,2.84,10,1.5&h=0,-99,60&n=0,-99,75&l=0,-99,80&b=0,-99,90',
+        'http://jconniff.github.io/skinner/index.html?opt=florida,#a74f02,#f9f8e2,2.22,1,10,1.5&h=0,-30,60&n=0,-30,75&l=0,-30,80&b=0,-30,90',
+        'http://jconniff.github.io/skinner/index.html?opt=bluegreen,#1c4773,#ffffff,1,1,10,1.5&h=0,-30,60&n=0,-30,75&l=0,-30,80&b=0,-30,90',
+        'http://jconniff.github.io/skinner/index.html?opt=powder,#a8bacd,#f0f3f4,1,1,10,1.5&h=180,-40,30&n=180,-40,70&l=180,-40,80&b=180,-30,90',
+        'http://jconniff.github.io/skinner/index.html?opt=brush,#8cb087,#f1f5f0,1,1,10,1.5&h=328,-40,30&n=180,-40,70&l=180,-40,80&b=180,-30,90',
+        'http://jconniff.github.io/skinner/index.html?opt=cran,#a4191d,#3f1413,0.3,2.84,10,1.5&h=0,-30,-35&n=0,-30,-50&l=0,-30,-60&b=0,-30,-70',
+        'http://jconniff.github.io/skinner/index.html?opt=monochrome,#424242,#aaabac,1,1,10,1.5&h=0,-99,60&n=0,-99,75&l=0,-99,80&b=0,-99,90'
+    ];
+
+    var populateData = function() {
+        var i;
+        for(i = 0; i < skinUrls.length; i+=1) {
+            data.push({   
+                master: '',
+                mHex: '', 
+                background: '',
+                bHex: '',
+                link: '',
+                name: '',
+                url: skinUrls[i]
+            });
+        }
+    };
+    populateData();
+
+
+    // processes a hex color value
+    // returns a 3 digit number where each digit 
+    // represents a coarse granularity ( 0-9 ) 
+    // of hue, sat, lit
+    // this is used for sorting colors
+    var getColorSortNum = function(hex, isBkg) {
+        var hue,
+            sat,
+            lit,
+            num;
+        hex = Y.Color.convert(hex, Y.Color.TYPES.HSL); // hsl(0, 100%, 50%)
+        hex = Y.Color.toArray(hex); // [0, 100, 50]
+        hue = Math.floor(hex[0] / 36.1).toString();
+        sat = Math.floor(hex[1] / 10.1).toString();
+        lit = Math.floor(hex[2] / 10.1).toString();
+        if(isBkg) {
+            num = lit + sat + hue;
+        } else {
+            num = hue + sat + lit;
+        }
+        
+        return num;
+    }
+
+    for(i = 0; i < data.length; i+=1) {
+        var qArr, 
+            mHex,
+            bHex;
+        qArr = Y.QueryString.parse(data[i].url.substring(data[i].url.indexOf('?opt=') + 1));
+        qArr = qArr.opt.split(',');
+        mHex = qArr[1];
+        bHex = qArr[2];
+        data[i].master = getColorSortNum(mHex, false);
+        data[i].mHex = mHex;
+        data[i].background = getColorSortNum(bHex, true);
+        data[i].bHex = bHex;
+        data[i].name = qArr[0];
+    }
+    var table = new Y.DataTable({
+        columns: cols,
+        data   : data,
+        //caption: "Table with simple column sorting",
+        summary: "Contacts list"
+    }).render("#datatable");
+
+});
+</script>
+<!--
+Copyright 2012 Yahoo! Inc. All rights reserved.
+
+Redistribution and use of this software in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+    * Neither the name of Yahoo! Inc. nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission of Yahoo! Inc.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
